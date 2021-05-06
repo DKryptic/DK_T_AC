@@ -372,17 +372,11 @@ namespace DK_T_AC
         private void fDisableUnlimitedAmmo()
         {
             int iAddressOfAmmoDecreaseFunction = pmcrw.ReadMultiLevelPointer(moduleBaseAddress + OS.m_os_LocalPlayerAmmoDecreaseFunctionInGame, 8, OS.m_os_OffsetsForAmmoFunction);
-            if (bOriginalBytesUnlimitedAmmo.Length == 3)
-            {
-                pmcrw.WriteBytes(iAddressOfAmmoDecreaseFunction, bOriginalBytesUnlimitedAmmo);
-            } else
-            {
-                bOriginalBytesUnlimitedAmmo[0] = 0x14;
-                bOriginalBytesUnlimitedAmmo[1] = 0xFF;
-                bOriginalBytesUnlimitedAmmo[2] = 0x0E;
-                pmcrw.WriteBytes(iAddressOfAmmoDecreaseFunction, bOriginalBytesUnlimitedAmmo);
-                AddToLog("Original bytes gone for Unlimited Ammo. Trying to override, but feature may nat be disabled. Restart game to disable Unlimited Ammo if it's not working.");
-            }
+            bOriginalBytesUnlimitedAmmo[0] = 0x14;
+            bOriginalBytesUnlimitedAmmo[1] = 0xFF;
+            bOriginalBytesUnlimitedAmmo[2] = 0x0E;
+            pmcrw.WriteBytes(iAddressOfAmmoDecreaseFunction, bOriginalBytesUnlimitedAmmo);
+            AddToLog("Original bytes gone for Unlimited Ammo. Trying to override, but feature may nat be disabled. Restart game to disable Unlimited Ammo if it's not working.");
         }
 
         private void chkUnlimitedAmmo_CheckStateChanged(object sender, EventArgs e)
@@ -411,7 +405,6 @@ namespace DK_T_AC
         private void fEnableGodMode()
         {
             int iAddressOfGodModeFunction = moduleBaseAddress + OS.m_os_GodMode;
-            //bOriginalBytesGodMode = pmcrw.readBytes(iAddressOfGodModeFunction, 3);
             byte[] nopGodMode = { 0x90, 0x90, 0x90 };
             pmcrw.WriteBytes(iAddressOfGodModeFunction, nopGodMode);
         }
@@ -419,29 +412,15 @@ namespace DK_T_AC
         private void fDisableGodMode()
         {
             int iAddressOfGodModeFunction = pmcrw.ReadInt(moduleBaseAddress + OS.m_os_GodMode);
-            //if (bOriginalBytesGodMode.Length == 3) {
-               // if (bOriginalBytesGodMode[0] == 0x90)
-               // {
-                    // The original bytes didn't get stored for some reason, so let's write the bytes we know should be there.
-                    // Not sure if these are the same for any PC, so don't leave this here unless you verify
-                    byte[] bStaticOriginalBytes = { 0x29, 0x7B, 0x04 };
-                    pmcrw.WriteBytes(moduleBaseAddress + OS.m_os_GodMode, bStaticOriginalBytes);
-               // } else
-              //  {
-               //     pmcrw.WriteBytes(iAddressOfGodModeFunction, bOriginalBytesGodMode);
-               // }
-            //}
-           // else
-            //{ //0x029 0x7B 0x4
-                AddToLog("Original bytes gone for God Mode. Can't disable feature. Restart game to disable God Mode");
-            //}
+            byte[] bStaticOriginalBytes = { 0x29, 0x7B, 0x04 };
+            pmcrw.WriteBytes(moduleBaseAddress + OS.m_os_GodMode, bStaticOriginalBytes);
+            AddToLog("Original bytes gone for God Mode. Can't disable feature. Restart game to disable God Mode");
         }
 
         private void fEnableFireGun()
         {
             int iAddressOfFireCurrentFunFunction = pmcrw.ReadMultiLevelPointer(moduleBaseAddress + OS.m_os_FireCurrentGun, 4, OS.m_os_OffsetsForFireCurrentGun);
-
-                pmcrw.WriteByte(iAddressOfFireCurrentFunFunction, 0x1);
+            pmcrw.WriteByte(iAddressOfFireCurrentFunFunction, 0x1);
             Thread.Sleep(2000);
             fDisableFireGun();
         }
